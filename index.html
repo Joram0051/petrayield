@@ -1109,26 +1109,206 @@
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- MODAL -->
+  <!-- INVEST MODAL -->
   <div class="modal-overlay" id="investModal">
-    <div class="modal">
+    <div class="modal" style="width:540px;max-height:90vh;overflow-y:auto;">
       <div class="modal-header">
-        <div class="modal-title" id="modalTitle">Petra Lite</div>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.3em;color:var(--gold);margin-bottom:6px;">PAYMENT INSTRUCTIONS</div>
+          <div class="modal-title" id="modalTitle">Petra Lite</div>
+        </div>
+        <button class="modal-close" onclick="closeInvestModal()">✕</button>
       </div>
       <div class="modal-body">
-        <div class="modal-barrel-info" id="modalInfo">
-          <!-- filled by JS -->
+
+        <!-- Step indicator -->
+        <div style="display:flex;gap:0;margin-bottom:28px;background:var(--dark);border:1px solid var(--border);">
+          <div class="pay-step active" id="step1tab" style="flex:1;padding:12px;text-align:center;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;border-right:1px solid var(--border);transition:all 0.3s;">① Barrel Details</div>
+          <div class="pay-step" id="step2tab" style="flex:1;padding:12px;text-align:center;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;border-right:1px solid var(--border);transition:all 0.3s;">② Send Payment</div>
+          <div class="pay-step" id="step3tab" style="flex:1;padding:12px;text-align:center;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;transition:all 0.3s;">③ Confirm</div>
         </div>
-        <div class="modal-input-group">
-          <div class="modal-input-label">Wallet Address (USDT TRC20)</div>
-          <input class="modal-input" type="text" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+
+        <!-- STEP 1: Barrel Info -->
+        <div id="payStep1">
+          <div class="modal-barrel-info" id="modalInfo"></div>
+          <div style="background:var(--dark);border:1px solid var(--border);padding:16px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8;">
+            ⚡ Earnings lock until cycle end<br>
+            ⚡ Early exit returns principal only<br>
+            ⚡ Max 3 active barrels per tier
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your Full Name</div>
+            <input class="modal-input" type="text" id="investName" placeholder="John Doe" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your Email Address</div>
+            <input class="modal-input" type="email" id="investEmail" placeholder="you@example.com" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your USDT Wallet Address (for withdrawals)</div>
+            <input class="modal-input" type="text" id="investWallet" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Referral Code (Optional)</div>
+            <input class="modal-input" type="text" id="investRef" placeholder="Enter referral code" />
+          </div>
+          <button class="modal-submit" onclick="goToPayStep(2)">Continue to Payment →</button>
         </div>
-        <div class="modal-input-group">
-          <div class="modal-input-label">Referral Code (Optional)</div>
-          <input class="modal-input" type="text" placeholder="Enter referral code" />
+
+        <!-- STEP 2: QR + Wallet Address -->
+        <div id="payStep2" style="display:none;">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Send exactly <span id="payAmount" style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700;"></span> USDT (TRC20) to:</div>
+            <!-- QR Code generated via JS -->
+            <div id="qrCode" style="display:inline-block;background:#fff;padding:16px;margin-bottom:16px;"></div>
+            <div style="font-size:10px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;">Wallet Address (TRC20)</div>
+            <div style="background:var(--dark);border:1px solid var(--border);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);word-break:break-all;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <span id="displayWalletAddr">TDYVaN2dY752zyJ4t9JRNH9utaXpaZRCFJ</span>
+              <button onclick="copyWallet()" id="copyWalletBtn" style="background:var(--gold);border:none;color:var(--black);padding:6px 14px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;cursor:none;white-space:nowrap;flex-shrink:0;">COPY</button>
+            </div>
+          </div>
+          <div style="background:rgba(200,150,62,0.08);border:1px solid var(--gold-dim);padding:16px;margin-bottom:20px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:0.2em;margin-bottom:8px;">⚠ IMPORTANT</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.8;">
+              • Send <strong style="color:var(--text);">ONLY USDT on TRC20 network</strong><br>
+              • Send the <strong style="color:var(--text);">exact amount</strong> shown above<br>
+              • Copy your <strong style="color:var(--text);">Transaction Hash (TxID)</strong> after sending<br>
+              • Do NOT close this page until confirmed
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;">
+            <button onclick="goToPayStep(1)" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--muted);padding:14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:none;transition:all 0.3s;">← Back</button>
+            <button class="modal-submit" style="flex:2;" onclick="goToPayStep(3)">I've Sent Payment →</button>
+          </div>
         </div>
-        <button class="modal-submit">Connect Wallet & Invest</button>
+
+        <!-- STEP 3: Confirm TxID -->
+        <div id="payStep3" style="display:none;">
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="font-size:40px;margin-bottom:12px;">🔍</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--white);margin-bottom:8px;">Confirm Your Payment</div>
+            <div style="font-size:13px;color:var(--muted);">Paste your blockchain Transaction Hash to complete registration.</div>
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Transaction Hash (TxID)</div>
+            <input class="modal-input" type="text" id="investTxid" placeholder="e.g. a1b2c3d4e5f6..." />
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;">Find this in your wallet's transaction history after sending.</div>
+          </div>
+          <div id="confirmMsg" style="display:none;background:rgba(200,150,62,0.1);border:1px solid var(--gold-dim);padding:16px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:28px;margin-bottom:8px;">✅</div>
+            <div style="font-size:14px;color:var(--gold);font-weight:700;">Investment Submitted!</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px;">Your barrel will be activated within 24 hours. Check your email for confirmation.</div>
+          </div>
+          <div id="confirmButtons">
+            <div style="display:flex;gap:12px;">
+              <button onclick="goToPayStep(2)" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--muted);padding:14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:none;">← Back</button>
+              <button class="modal-submit" style="flex:2;" onclick="submitInvestment()">Submit Confirmation</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- WITHDRAWAL MODAL -->
+  <div class="modal-overlay" id="withdrawModal">
+    <div class="modal" style="width:520px;max-height:90vh;overflow-y:auto;">
+      <div class="modal-header">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.3em;color:var(--gold);margin-bottom:6px;">CYCLE-END WITHDRAWAL</div>
+          <div class="modal-title">Request Withdrawal</div>
+        </div>
+        <button class="modal-close" onclick="closeWithdrawModal()">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Locked state -->
+        <div id="withdrawLocked" style="display:none;text-align:center;padding:20px 0;">
+          <div style="font-size:56px;margin-bottom:16px;">🔒</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--white);margin-bottom:12px;">Withdrawals Locked</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:24px;">Your barrel cycle has not ended yet. Withdrawals are only available at the end of your investment cycle.<br><br>Early exit returns <strong style="color:var(--gold);">principal only</strong> — no yield.</div>
+          <div style="background:var(--dark);border:1px solid var(--border);padding:20px;margin-bottom:20px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:0.2em;margin-bottom:12px;">CYCLE END DATES</div>
+            <div style="display:flex;flex-direction:column;gap:8px;" id="cycleEndDates"></div>
+          </div>
+          <button onclick="showEarlyExit()" style="background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px 28px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:none;transition:all 0.3s;width:100%;">Request Early Exit (Principal Only)</button>
+        </div>
+
+        <!-- Early exit confirm -->
+        <div id="earlyExitPanel" style="display:none;">
+          <div style="background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.3);padding:16px;margin-bottom:20px;">
+            <div style="font-size:12px;color:#ff8080;line-height:1.8;">⚠ Early exit will return your <strong>principal only</strong>. All accrued yield will be forfeited. This action cannot be undone.</div>
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your Email</div>
+            <input class="modal-input" type="email" id="earlyEmail" placeholder="you@example.com" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Barrel to Exit</div>
+            <select class="modal-input" id="earlyBarrel" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%23888%22 stroke-width=%221.5%22 fill=%22none%22/></svg>');background-repeat:no-repeat;background-position:right 14px center;">
+              <option value="">Select barrel...</option>
+              <option>Petra Lite ($10)</option>
+              <option>Petra Core ($30)</option>
+              <option>Petra Prime ($50)</option>
+              <option>Petra Elite ($100)</option>
+            </select>
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your Withdrawal Wallet (TRC20)</div>
+            <input class="modal-input" type="text" id="earlyWallet" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+          </div>
+          <div style="display:flex;gap:12px;">
+            <button onclick="document.getElementById('earlyExitPanel').style.display='none';document.getElementById('withdrawLocked').style.display='block';" style="flex:1;background:transparent;border:1px solid var(--border);color:var(--muted);padding:14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:none;">Cancel</button>
+            <button onclick="submitEarlyExit()" style="flex:2;background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.4);color:#ff8080;padding:14px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:none;">Confirm Early Exit</button>
+          </div>
+        </div>
+
+        <!-- Unlocked withdrawal form -->
+        <div id="withdrawForm">
+          <div style="background:rgba(200,150,62,0.08);border:1px solid var(--gold-dim);padding:14px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:20px;">✅</span>
+            <div style="font-size:12px;color:var(--gold);">Your cycle has ended. Withdrawal is now available!</div>
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Your Full Name</div>
+            <input class="modal-input" type="text" id="wdName" placeholder="John Doe" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Email Address (used during investment)</div>
+            <input class="modal-input" type="email" id="wdEmail" placeholder="you@example.com" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Barrel Being Withdrawn</div>
+            <select class="modal-input" id="wdBarrel" style="appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%23888%22 stroke-width=%221.5%22 fill=%22none%22/></svg>');background-repeat:no-repeat;background-position:right 14px center;">
+              <option value="">Select barrel...</option>
+              <option>Petra Lite — $11.20 total</option>
+              <option>Petra Core — $39.00 total</option>
+              <option>Petra Prime — $75.50 total</option>
+              <option>Petra Elite — $194.50 total</option>
+            </select>
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Withdrawal Wallet Address (TRC20 USDT)</div>
+            <input class="modal-input" type="text" id="wdWallet" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+          </div>
+          <div class="modal-input-group">
+            <div class="modal-input-label">Original Investment TxID</div>
+            <input class="modal-input" type="text" id="wdTxid" placeholder="Your original transaction hash" />
+          </div>
+          <div style="background:var(--dark);border:1px solid var(--border);padding:14px 16px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8;">
+            ⏱ Processing: 24–48 hours<br>
+            💸 Withdrawal fee: 1–3%<br>
+            📋 Min. withdrawal: $10
+          </div>
+          <div id="wdSuccessMsg" style="display:none;background:rgba(200,150,62,0.1);border:1px solid var(--gold-dim);padding:16px;margin-bottom:16px;text-align:center;">
+            <div style="font-size:28px;margin-bottom:8px;">✅</div>
+            <div style="font-size:14px;color:var(--gold);font-weight:700;">Withdrawal Request Submitted!</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:6px;">We'll process your payment within 24–48 hours. Check your email for updates.</div>
+          </div>
+          <button class="modal-submit" id="wdSubmitBtn" onclick="submitWithdrawal()">Submit Withdrawal Request</button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1142,6 +1322,7 @@
       <li><a href="#yield">Yield</a></li>
       <li><a href="#referral">Referral</a></li>
       <li><a href="#faq">FAQ</a></li>
+      <li><a href="#" onclick="openWithdrawModal();return false;" style="color:var(--gold);">Withdraw</a></li>
     </ul>
     <button class="nav-cta" onclick="document.getElementById('barrels').scrollIntoView({behavior:'smooth'})">Start Investing</button>
   </nav>
@@ -1530,6 +1711,63 @@
     </div>
   </section>
 
+  <!-- WITHDRAWAL SECTION -->
+  <section style="background:var(--black);padding:120px 60px;" id="withdraw">
+    <div class="section-label reveal">Cycle-End Payouts</div>
+    <h2 class="section-title reveal reveal-delay-1">Withdraw Your<br><em>Returns</em></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-top:80px;">
+      <div class="reveal reveal-delay-2">
+        <p style="font-size:16px;line-height:1.9;color:var(--muted);margin-bottom:20px;">Withdrawals are available <strong style="color:var(--text);">only at the end of your barrel's cycle</strong>. This ensures pool stability and protects all investors' yields.</p>
+        <p style="font-size:16px;line-height:1.9;color:var(--muted);margin-bottom:40px;">Once your cycle ends, submit a withdrawal request and receive your <strong style="color:var(--text);">principal + full yield</strong> within 24–48 hours to your USDT TRC20 wallet.</p>
+        <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);">
+          <div style="background:var(--dark);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:var(--muted);">Petra Lite</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">Withdraw after Day 10</span>
+          </div>
+          <div style="background:var(--dark);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:var(--muted);">Petra Core</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">Withdraw after Day 20</span>
+          </div>
+          <div style="background:var(--dark);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:var(--muted);">Petra Prime</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">Withdraw after Day 30</span>
+          </div>
+          <div style="background:var(--dark);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:var(--muted);">Petra Elite</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">Withdraw after Day 45</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div style="background:var(--card);border:1px solid var(--border);padding:48px;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
+          <div style="font-size:56px;text-align:center;margin-bottom:24px;">💰</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--white);text-align:center;margin-bottom:8px;">Ready to Withdraw?</div>
+          <div style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:32px;line-height:1.7;">Enter your details and we'll process your payout within 24–48 hours.</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;background:var(--dark);border:1px solid var(--border);padding:20px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--muted);">Processing Time</span>
+              <span style="font-family:'JetBrains Mono',monospace;color:var(--text);">24–48 hours</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--muted);">Network Fee</span>
+              <span style="font-family:'JetBrains Mono',monospace;color:var(--text);">1–3%</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--muted);">Minimum Amount</span>
+              <span style="font-family:'JetBrains Mono',monospace;color:var(--text);">$10</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--muted);">Network</span>
+              <span style="font-family:'JetBrains Mono',monospace;color:var(--gold);">USDT TRC20</span>
+            </div>
+          </div>
+          <button class="modal-submit" onclick="openWithdrawModal()" style="width:100%;">Request Withdrawal</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FAQ -->
   <section class="faq" id="faq">
     <div class="section-label reveal">Common Questions</div>
@@ -1633,7 +1871,19 @@
     </div>
   </footer>
 
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Formspree for email notifications (no backend needed) -->
   <script>
+    // ─── CONFIG ───────────────────────────────────────────────
+    const OWNER_WALLET = 'TDYVaN2dY752zyJ4t9JRNH9utaXpaZRCFJ';
+    // Sign up free at formspree.io, create a form, paste your form ID below:
+    const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; // e.g. 'xpwzgkab'
+    // ──────────────────────────────────────────────────────────
+
+    let currentBarrel = {};
+    let qrInstance = null;
+
     // CURSOR
     const cursor = document.getElementById('cursor');
     const ring = document.getElementById('cursorRing');
@@ -1647,16 +1897,12 @@
     });
     document.querySelectorAll('button, a, .barrel-card, .step, .faq-question, .yield-item, .wallet-card').forEach(el => {
       el.addEventListener('mouseenter', () => {
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        ring.style.width = '60px';
-        ring.style.height = '60px';
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '60px'; ring.style.height = '60px';
       });
       el.addEventListener('mouseleave', () => {
-        cursor.style.width = '12px';
-        cursor.style.height = '12px';
-        ring.style.width = '40px';
-        ring.style.height = '40px';
+        cursor.style.width = '12px'; cursor.style.height = '12px';
+        ring.style.width = '40px'; ring.style.height = '40px';
       });
     });
 
@@ -1664,7 +1910,7 @@
     const items = [
       'USDT/TRC20', 'Stablecoin Staking', 'Petra Lite — $10',
       'Petra Core — $30', 'Arbitrage Strategy', 'Petra Prime — $50',
-      'Petra Elite — $100', 'Liquidity Pools', '24h Withdrawals',
+      'Petra Elite — $100', 'Liquidity Pools', '24–48h Withdrawals',
       'Level 1 Referral — 5%', 'Level 2 Referral — 2%', 'DeFi Yield',
     ];
     const ticker = document.getElementById('tickerInner');
@@ -1676,13 +1922,9 @@
     // SCROLL REVEAL
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); }
-      });
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     reveals.forEach(r => observer.observe(r));
-
-    // Hero immediate reveal
     setTimeout(() => {
       document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
     }, 100);
@@ -1695,9 +1937,9 @@
       if (!wasOpen) item.classList.add('open');
     }
 
-    // MODAL
-    const barrelData = {};
+    // ── INVEST MODAL ────────────────────────────────────────────
     function openModal(name, price, cycle, daily, total, roi) {
+      currentBarrel = { name, price, cycle, daily, total, roi };
       document.getElementById('modalTitle').textContent = name;
       document.getElementById('modalInfo').innerHTML = `
         <div class="modal-detail"><span>Barrel</span><span>${name}</span></div>
@@ -1707,13 +1949,216 @@
         <div class="modal-detail"><span>Total Return</span><span>${total}</span></div>
         <div class="modal-detail"><span>ROI</span><span>${roi}</span></div>
       `;
+      // Reset to step 1
+      goToPayStep(1);
       document.getElementById('investModal').classList.add('active');
     }
-    function closeModal() {
+
+    function closeInvestModal() {
       document.getElementById('investModal').classList.remove('active');
+      // Reset confirm message
+      document.getElementById('confirmMsg').style.display = 'none';
+      document.getElementById('confirmButtons').style.display = 'block';
     }
+
+    function goToPayStep(step) {
+      [1,2,3].forEach(i => {
+        document.getElementById('payStep'+i).style.display = i === step ? 'block' : 'none';
+        const tab = document.getElementById('step'+i+'tab');
+        tab.style.background = i === step ? 'var(--gold)' : 'transparent';
+        tab.style.color = i === step ? 'var(--black)' : 'var(--muted)';
+        tab.style.fontWeight = i === step ? '700' : '400';
+      });
+
+      if (step === 2) {
+        // Generate QR code
+        document.getElementById('payAmount').textContent = currentBarrel.price + ' USDT';
+        const qrEl = document.getElementById('qrCode');
+        qrEl.innerHTML = '';
+        try {
+          new QRCode(qrEl, {
+            text: OWNER_WALLET,
+            width: 160, height: 160,
+            colorDark: '#000000', colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } catch(e) {
+          qrEl.innerHTML = '<div style="width:160px;height:160px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;color:#333;text-align:center;padding:16px;">QR unavailable<br>Copy address below</div>';
+        }
+      }
+    }
+
+    function copyWallet() {
+      const btn = document.getElementById('copyWalletBtn');
+      navigator.clipboard.writeText(OWNER_WALLET).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = OWNER_WALLET;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      });
+      btn.textContent = 'COPIED!';
+      btn.style.background = '#4caf50';
+      setTimeout(() => { btn.textContent = 'COPY'; btn.style.background = 'var(--gold)'; }, 2000);
+    }
+
+    async function submitInvestment() {
+      const name = document.getElementById('investName').value.trim();
+      const email = document.getElementById('investEmail').value.trim();
+      const wallet = document.getElementById('investWallet').value.trim();
+      const txid = document.getElementById('investTxid').value.trim();
+      const ref = document.getElementById('investRef').value.trim();
+
+      if (!name || !email || !wallet || !txid) {
+        alert('Please fill in all required fields including your Transaction Hash.');
+        return;
+      }
+
+      const submitBtn = document.querySelector('#payStep3 .modal-submit');
+      submitBtn.textContent = 'Submitting...';
+      submitBtn.disabled = true;
+
+      const payload = {
+        subject: `New Petrayield Investment — ${currentBarrel.name}`,
+        name, email, wallet, txid,
+        barrel: currentBarrel.name,
+        amount: currentBarrel.price,
+        cycle: currentBarrel.cycle,
+        referral: ref || 'None',
+        message: `New investment submitted:\n\nName: ${name}\nEmail: ${email}\nBarrel: ${currentBarrel.name} (${currentBarrel.price})\nCycle: ${currentBarrel.cycle}\nTxID: ${txid}\nUser Wallet: ${wallet}\nReferral: ${ref || 'None'}`
+      };
+
+      try {
+        if (FORMSPREE_ID !== 'YOUR_FORMSPREE_ID') {
+          await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        document.getElementById('confirmMsg').style.display = 'block';
+        document.getElementById('confirmButtons').style.display = 'none';
+      } catch(err) {
+        // Even if email fails, show success to user
+        document.getElementById('confirmMsg').style.display = 'block';
+        document.getElementById('confirmButtons').style.display = 'none';
+      }
+    }
+
+    // ── WITHDRAWAL MODAL ────────────────────────────────────────
+    function openWithdrawModal() {
+      // Show appropriate panel based on simulation
+      // In production you'd check the user's actual investment start date
+      // For demo: show the full form (cycle ended). Change to showLocked() to show locked state.
+      document.getElementById('withdrawForm').style.display = 'block';
+      document.getElementById('withdrawLocked').style.display = 'none';
+      document.getElementById('earlyExitPanel').style.display = 'none';
+      document.getElementById('wdSuccessMsg').style.display = 'none';
+      document.getElementById('wdSubmitBtn').style.display = 'block';
+      document.getElementById('withdrawModal').classList.add('active');
+    }
+
+    function showLockedWithdrawal() {
+      // Populate cycle end dates dynamically
+      const today = new Date();
+      const cycles = [
+        { name: 'Petra Lite', days: 10 },
+        { name: 'Petra Core', days: 20 },
+        { name: 'Petra Prime', days: 30 },
+        { name: 'Petra Elite', days: 45 },
+      ];
+      const el = document.getElementById('cycleEndDates');
+      el.innerHTML = cycles.map(c => {
+        const end = new Date(today.getTime() + c.days * 86400000);
+        return `<div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="color:var(--muted);">${c.name}</span>
+          <span style="font-family:'JetBrains Mono',monospace;color:var(--gold);">Day ${c.days} — ${end.toDateString()}</span>
+        </div>`;
+      }).join('');
+      document.getElementById('withdrawLocked').style.display = 'block';
+      document.getElementById('withdrawForm').style.display = 'none';
+      document.getElementById('earlyExitPanel').style.display = 'none';
+      document.getElementById('withdrawModal').classList.add('active');
+    }
+
+    function closeWithdrawModal() {
+      document.getElementById('withdrawModal').classList.remove('active');
+    }
+
+    function showEarlyExit() {
+      document.getElementById('withdrawLocked').style.display = 'none';
+      document.getElementById('earlyExitPanel').style.display = 'block';
+    }
+
+    async function submitWithdrawal() {
+      const name = document.getElementById('wdName').value.trim();
+      const email = document.getElementById('wdEmail').value.trim();
+      const barrel = document.getElementById('wdBarrel').value;
+      const wallet = document.getElementById('wdWallet').value.trim();
+      const txid = document.getElementById('wdTxid').value.trim();
+
+      if (!name || !email || !barrel || !wallet || !txid) {
+        alert('Please fill in all fields to submit your withdrawal request.');
+        return;
+      }
+
+      const btn = document.getElementById('wdSubmitBtn');
+      btn.textContent = 'Submitting...';
+      btn.disabled = true;
+
+      const payload = {
+        subject: `Withdrawal Request — ${barrel}`,
+        name, email, barrel, wallet, txid,
+        message: `Withdrawal request:\n\nName: ${name}\nEmail: ${email}\nBarrel: ${barrel}\nWithdrawal Wallet: ${wallet}\nOriginal TxID: ${txid}`
+      };
+
+      try {
+        if (FORMSPREE_ID !== 'YOUR_FORMSPREE_ID') {
+          await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        document.getElementById('wdSuccessMsg').style.display = 'block';
+        btn.style.display = 'none';
+      } catch(err) {
+        document.getElementById('wdSuccessMsg').style.display = 'block';
+        btn.style.display = 'none';
+      }
+    }
+
+    async function submitEarlyExit() {
+      const email = document.getElementById('earlyEmail').value.trim();
+      const barrel = document.getElementById('earlyBarrel').value;
+      const wallet = document.getElementById('earlyWallet').value.trim();
+      if (!email || !barrel || !wallet) { alert('Please fill in all fields.'); return; }
+
+      const payload = {
+        subject: `⚠ Early Exit Request — ${barrel}`,
+        email, barrel, wallet,
+        message: `Early exit (principal only):\n\nEmail: ${email}\nBarrel: ${barrel}\nWallet: ${wallet}`
+      };
+      try {
+        if (FORMSPREE_ID !== 'xgonkjzo') {
+          await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+      } catch(e) {}
+      document.getElementById('earlyExitPanel').innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:36px;margin-bottom:12px;">✅</div><div style="font-size:14px;color:var(--gold);font-weight:700;">Early Exit Requested</div><div style="font-size:12px;color:var(--muted);margin-top:8px;">We will return your principal within 24–48 hours.</div></div>';
+    }
+
+    // Overlay click to close
     document.getElementById('investModal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
+      if (e.target === this) closeInvestModal();
+    });
+    document.getElementById('withdrawModal').addEventListener('click', function(e) {
+      if (e.target === this) closeWithdrawModal();
     });
 
     // COPY REF
@@ -1726,7 +2171,7 @@
 
     // Escape key
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape') { closeInvestModal(); closeWithdrawModal(); }
     });
   </script>
 </body>
