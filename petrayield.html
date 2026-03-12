@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Petrayield – Refining Digital Wealth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black: #080808;
+      --deep: #0d0d0d;
+      --dark: #111111;
+      --card: #161616;
+      --border: #222222;
+      --gold: #c8963e;
+      --gold-light: #e8b560;
+      --gold-dim: #8a6020;
+      --amber: #f0a030;
+      --oil: #1a1400;
+      --cream: #f5ede0;
+      --text: #d4c9b8;
+      --muted: #6b6055;
+      --white: #faf8f4;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CUSTOM CURSOR */
+    .cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease-out, width 0.3s, height 0.3s, opacity 0.3s;
+      opacity: 0.5;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.6;
+    }
+
+    /* NAVBAR */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 60px;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
+      backdrop-filter: blur(2px);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.05em;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      padding: 10px 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover {
+      background: var(--gold);
+      color: var(--black);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 60px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(200,150,62,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,150,62,0.04) 0%, transparent 50%),
+        linear-gradient(180deg, #080808 0%, #0a0800 100%);
+    }
+
+    /* Animated oil drops */
+    .oil-drops {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .drop {
+      position: absolute;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: radial-gradient(circle at 35% 35%, rgba(200,150,62,0.15), rgba(200,150,62,0.03));
+      border: 1px solid rgba(200,150,62,0.08);
+      animation: floatDrop linear infinite;
+    }
+    .drop:nth-child(1) { width: 120px; height: 160px; left: 5%; animation-duration: 18s; animation-delay: 0s; }
+    .drop:nth-child(2) { width: 80px; height: 110px; left: 15%; animation-duration: 22s; animation-delay: -5s; }
+    .drop:nth-child(3) { width: 200px; height: 260px; right: 10%; animation-duration: 26s; animation-delay: -8s; }
+    .drop:nth-child(4) { width: 60px; height: 80px; right: 25%; animation-duration: 20s; animation-delay: -12s; }
+    .drop:nth-child(5) { width: 140px; height: 180px; left: 40%; animation-duration: 24s; animation-delay: -3s; }
+
+    @keyframes floatDrop {
+      0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-20vh) rotate(15deg); opacity: 0; }
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(64px, 9vw, 140px);
+      font-weight: 700;
+      line-height: 0.9;
+      color: var(--white);
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .hero-title .italic { font-style: italic; color: var(--gold); }
+    .hero-title .outline {
+      -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 2.5vw, 28px);
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 60px;
+      max-width: 500px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--amber) 100%);
+      color: var(--black);
+      border: none;
+      padding: 18px 48px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--amber), var(--gold));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .btn-primary:hover::after { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: none;
+      padding: 18px 0;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      cursor: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--gold); }
+    .btn-ghost .arrow {
+      width: 32px; height: 1px;
+      background: currentColor;
+      position: relative;
+      transition: width 0.3s;
+    }
+    .btn-ghost:hover .arrow { width: 48px; }
+    .btn-ghost .arrow::after {
+      content: '';
+      position: absolute;
+      right: 0; top: -3px;
+      border: 4px solid transparent;
+      border-left-color: currentColor;
+      border-right: none;
+    }
+
+    .hero-stats {
+      position: absolute;
+      right: 60px;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .stat-item {
+      text-align: right;
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* TICKER */
+    .ticker {
+      background: var(--gold);
+      padding: 12px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker-inner {
+      display: flex;
+      gap: 0;
+      animation: ticker 30s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--black);
+      letter-spacing: 0.1em;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .ticker-item .dot {
+      width: 4px; height: 4px;
+      background: var(--black);
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* SECTION STYLES */
+    section {
+      padding: 120px 60px;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    /* ABOUT */
+    .about {
+      background: var(--deep);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: start;
+      margin-top: 80px;
+    }
+    .about-text p {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .about-visual {
+      position: relative;
+    }
+    .barrel-display {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .barrel-display::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+    }
+    .barrel-icon {
+      font-size: 80px;
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1;
+      filter: drop-shadow(0 0 30px rgba(200,150,62,0.3));
+    }
+    .barrel-label {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* HOW IT WORKS */
+    .how {
+      background: var(--black);
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 80px;
+    }
+    .step {
+      background: var(--dark);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+    .step:hover { background: var(--card); }
+    .step::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+    .step:hover::after { transform: scaleX(1); }
+
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 80px;
+      font-weight: 700;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 24px;
+      transition: color 0.4s;
+    }
+    .step:hover .step-num { color: rgba(200,150,62,0.2); }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .step-desc {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* BARRELS / INVEST */
+    .barrels {
+      background: var(--deep);
+    }
+    .barrels-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 80px;
+    }
+    .barrel-card {
+      background: var(--dark);
+      padding: 48px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s;
+      cursor: none;
+    }
+    .barrel-card.featured {
+      background: var(--oil);
+    }
+    .barrel-card:hover {
+      background: var(--card);
+      transform: translateY(-4px);
+    }
+    .barrel-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--border);
+      transition: background 0.4s;
+    }
+    .barrel-card:hover::before,
+    .barrel-card.featured::before {
+      background: var(--gold);
+    }
+
+    .barrel-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .barrel-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 32px;
+    }
+    .barrel-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .barrel-price-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+    }
+
+    .barrel-specs {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .spec-key {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .spec-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .spec-val.highlight { color: var(--gold); }
+
+    .barrel-invest-btn {
+      width: 100%;
+      margin-top: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: all 0.3s;
+    }
+    .barrel-invest-btn:hover,
+    .barrel-card:hover .barrel-invest-btn {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+    .barrel-card.featured .barrel-invest-btn {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+
+    /* YIELD SOURCE */
+    .yield-source {
+      background: var(--black);
+    }
+    .yield-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-top: 80px;
+    }
+    .yield-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+    }
+    .yield-item {
+      background: var(--dark);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      transition: background 0.3s;
+    }
+    .yield-item:hover { background: var(--card); }
+    .yield-icon {
+      font-size: 28px;
+      width: 52px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .yield-info h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .yield-info p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .yield-chart {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .yield-chart::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .chart-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 160px;
+    }
+    .chart-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .chart-bar {
+      width: 100%;
+      background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dim) 100%);
+      border-radius: 2px 2px 0 0;
+      position: relative;
+      transition: opacity 0.3s;
+      animation: growBar 1s ease-out forwards;
+      transform-origin: bottom;
+    }
+    @keyframes growBar {
+      from { transform: scaleY(0); }
+      to { transform: scaleY(1); }
+    }
+    .chart-bar-label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .chart-line {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .legend-dot.dim { background: var(--gold-dim); }
+
+    /* REFERRAL */
+    .referral {
+      background: var(--deep);
+    }
+    .referral-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+      margin-top: 80px;
+    }
+    .referral-desc p {
+      font-size: 16px;
+      line-height: 1.9;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .ref-levels {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+    }
+    .ref-level {
+      background: var(--dark);
+      padding: 28px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s;
+    }
+    .ref-level:hover { background: var(--card); }
+    .ref-level-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .ref-level-label span {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+    .ref-level-pct {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    /* WALLETS */
+    .wallets {
+      background: var(--black);
+    }
+    .wallets-row {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      margin-top: 80px;
+    }
+    .wallet-card {
+      flex: 1;
+      background: var(--dark);
+      padding: 48px;
+      text-align: center;
+      transition: background 0.3s;
+    }
+    .wallet-card:hover { background: var(--card); }
+    .wallet-logo {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .wallet-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .wallet-desc {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .coins-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 60px;
+      flex-wrap: wrap;
+    }
+    .coin-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 12px 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: border-color 0.3s;
+    }
+    .coin-badge:hover { border-color: var(--gold); }
+
+    /* FAQ */
+    .faq {
+      background: var(--deep);
+    }
+    .faq-list {
+      margin-top: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+    }
+    .faq-item {
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      padding: 28px 36px;
+      cursor: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.3s;
+    }
+    .faq-question:hover { color: var(--white); }
+    .faq-question .faq-icon {
+      font-size: 20px;
+      color: var(--gold);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-question .faq-icon { transform: rotate(45deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out, padding 0.3s;
+      padding: 0 36px;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+      padding: 0 36px 28px;
+    }
+    .faq-answer p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+      border-left: 2px solid var(--gold-dim);
+      padding-left: 20px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 80px 60px 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-top: 16px;
+      max-width: 260px;
+    }
+    .footer-col h5 {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-col ul a {
+      text-decoration: none;
+      font-size: 13px;
+      color: var(--muted);
+      transition: color 0.3s;
+    }
+    .footer-col ul a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-disclaimer {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      opacity: 0.6;
+      max-width: 500px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* INVEST MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      width: 480px;
+      max-width: 90vw;
+      position: relative;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-header {
+      padding: 32px 36px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: none;
+      transition: color 0.3s;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--gold); }
+    .modal-body {
+      padding: 32px 36px;
+    }
+    .modal-barrel-info {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .modal-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-detail:last-child { border-bottom: none; }
+    .modal-detail span:first-child { font-size: 12px; color: var(--muted); }
+    .modal-detail span:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--gold);
+    }
+    .modal-input-group {
+      margin-bottom: 20px;
+    }
+    .modal-input-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .modal-input {
+      width: 100%;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      color: var(--white);
+      padding: 14px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .modal-input:focus { border-color: var(--gold); }
+    .modal-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--gold), var(--amber));
+      border: none;
+      color: var(--black);
+      padding: 16px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: opacity 0.3s;
+    }
+    .modal-submit:hover { opacity: 0.9; }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    @media (max-width: 1024px) {
+      nav { padding: 20px 30px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 30px 60px; }
+      .hero-stats { right: 30px; bottom: 60px; }
+      section { padding: 80px 30px; }
+      .about-grid, .yield-grid, .referral-layout { grid-template-columns: 1fr; gap: 48px; }
+      .steps-grid, .barrels-grid { grid-template-columns: 1fr 1fr; }
+      .wallets-row { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+      footer { padding: 60px 30px 30px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero-stats { display: none; }
+      .steps-grid, .barrels-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="investModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Petra Lite</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-barrel-info" id="modalInfo">
+          <!-- filled by JS -->
+        </div>
+        <div class="modal-input-group">
+          <div class="modal-input-label">Wallet Address (USDT TRC20)</div>
+          <input class="modal-input" type="text" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+        </div>
+        <div class="modal-input-group">
+          <div class="modal-input-label">Referral Code (Optional)</div>
+          <input class="modal-input" type="text" placeholder="Enter referral code" />
+        </div>
+        <button class="modal-submit">Connect Wallet & Invest</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-logo">Petra<span>yield</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#barrels">Invest</a></li>
+      <li><a href="#yield">Yield</a></li>
+      <li><a href="#referral">Referral</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('barrels').scrollIntoView({behavior:'smooth'})">Start Investing</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="oil-drops">
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+      <div class="drop"></div>
+    </div>
+
+    <div style="position:relative;z-index:2;">
+      <div class="hero-eyebrow reveal">Digital Oil · Crypto Yield · Web3</div>
+      <h1 class="hero-title reveal reveal-delay-1">
+        Refining<br>
+        <span class="italic">Digital</span><br>
+        <span class="outline">Wealth</span>
+      </h1>
+      <p class="hero-subtitle reveal reveal-delay-2">
+        Invest in Petra Barrels — fixed-cycle digital assets powered by real crypto yield strategies.
+      </p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <button class="btn-primary" onclick="document.getElementById('barrels').scrollIntoView({behavior:'smooth'})">
+          <span>Explore Barrels</span>
+        </button>
+        <button class="btn-ghost" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+          <div class="arrow"></div>
+          How It Works
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-stats reveal">
+      <div class="stat-item">
+        <div class="stat-num">$10</div>
+        <div class="stat-label">Min. Entry</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Barrel Tiers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">~19%</div>
+        <div class="stat-label">Avg. Return</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner" id="tickerInner">
+      <!-- duplicated in JS for seamless loop -->
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="section-label reveal">Platform Overview</div>
+    <h2 class="section-title reveal reveal-delay-1">What is<br><em>Petrayield?</em></h2>
+    <div class="about-grid">
+      <div class="about-text reveal reveal-delay-2">
+        <p>Petrayield is a <strong>digital oil–themed crypto investment platform</strong> that transforms how users grow their wealth in the crypto space. We represent investment plans as "Petra Barrels" — fixed-cycle digital assets with projected daily yields.</p>
+        <p>Each barrel operates on a defined cycle. Your funds are pooled with others and allocated to <strong>stablecoin staking, exchange arbitrage, liquidity provision, and low-risk trading strategies</strong> — generating consistent, sustainable returns.</p>
+        <p>Earnings accrue daily and are released at cycle end. We operate with full <strong>transparency, conservative risk controls</strong>, and a layered referral system that rewards community growth — without pyramid structures.</p>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-dim);letter-spacing:0.1em;">⚠ Oil barrel representations are digital investment assets, not real oil trading.</p>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="barrel-display">
+          <div class="barrel-icon">🛢️</div>
+          <div class="barrel-label">Petra Barrel — Digital Investment Asset</div>
+          <div style="margin-top:36px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:12px;color:var(--muted);">Asset Type</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);">Fixed-Cycle Digital</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:12px;color:var(--muted);">Currency</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);">USDT / USDC</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:12px;color:var(--muted);">Max Barrels/Tier</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);">3 Active</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;">
+              <span style="font-size:12px;color:var(--muted);">Early Exit</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);">Principal Only</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="section-label reveal">Process</div>
+    <h2 class="section-title reveal reveal-delay-1">How It<br><em>Works</em></h2>
+    <div class="steps-grid">
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <div class="step-title">Connect Your Wallet</div>
+        <div class="step-desc">Link Trust Wallet, MetaMask, or Binance Wallet. We support USDT on TRC20 and BEP20 networks.</div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <div class="step-title">Choose a Barrel</div>
+        <div class="step-desc">Select from Petra Lite ($10) to Petra Elite ($100). Each tier has a fixed cycle and projected daily yield.</div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <div class="step-title">Yield Accrues Daily</div>
+        <div class="step-desc">Your barrel earns every day. Earnings are locked until cycle completion to maintain pool liquidity.</div>
+      </div>
+      <div class="step reveal reveal-delay-4">
+        <div class="step-num">04</div>
+        <div class="step-title">Withdraw at Cycle End</div>
+        <div class="step-desc">At cycle completion, withdraw principal + full yield. Minimum $5 withdrawal, processed in 24–48 hours.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BARRELS -->
+  <section class="barrels" id="barrels">
+    <div class="section-label reveal">Investment Tiers</div>
+    <h2 class="section-title reveal reveal-delay-1">Petra<br><em>Barrels</em></h2>
+    <div class="barrels-grid">
+      <div class="barrel-card reveal reveal-delay-1">
+        <div class="barrel-tier">Tier 01</div>
+        <div class="barrel-name">Petra Lite</div>
+        <div class="barrel-price">$10</div>
+        <div class="barrel-price-label">Entry Price</div>
+        <div class="barrel-specs">
+          <div class="spec-row">
+            <span class="spec-key">Cycle</span>
+            <span class="spec-val">10 Days</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Daily Yield</span>
+            <span class="spec-val highlight">$0.12 / day</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Total Return</span>
+            <span class="spec-val highlight">$11.20</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Profit</span>
+            <span class="spec-val">+$1.20</span>
+          </div>
+        </div>
+        <button class="barrel-invest-btn" onclick="openModal('Petra Lite','$10','10 Days','$0.12/day','$11.20','+12%')">Invest Now</button>
+      </div>
+
+      <div class="barrel-card reveal reveal-delay-2">
+        <div class="barrel-tier">Tier 02</div>
+        <div class="barrel-name">Petra Core</div>
+        <div class="barrel-price">$30</div>
+        <div class="barrel-price-label">Entry Price</div>
+        <div class="barrel-specs">
+          <div class="spec-row">
+            <span class="spec-key">Cycle</span>
+            <span class="spec-val">20 Days</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Daily Yield</span>
+            <span class="spec-val highlight">$0.45 / day</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Total Return</span>
+            <span class="spec-val highlight">$39.00</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Profit</span>
+            <span class="spec-val">+$9.00</span>
+          </div>
+        </div>
+        <button class="barrel-invest-btn" onclick="openModal('Petra Core','$30','20 Days','$0.45/day','$39.00','+30%')">Invest Now</button>
+      </div>
+
+      <div class="barrel-card featured reveal reveal-delay-3">
+        <div class="barrel-tier" style="color:var(--amber);">★ Most Popular</div>
+        <div class="barrel-name">Petra Prime</div>
+        <div class="barrel-price">$50</div>
+        <div class="barrel-price-label">Entry Price</div>
+        <div class="barrel-specs">
+          <div class="spec-row">
+            <span class="spec-key">Cycle</span>
+            <span class="spec-val">30 Days</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Daily Yield</span>
+            <span class="spec-val highlight">$0.85 / day</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Total Return</span>
+            <span class="spec-val highlight">$75.50</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Profit</span>
+            <span class="spec-val">+$25.50</span>
+          </div>
+        </div>
+        <button class="barrel-invest-btn" onclick="openModal('Petra Prime','$50','30 Days','$0.85/day','$75.50','+51%')">Invest Now</button>
+      </div>
+
+      <div class="barrel-card reveal reveal-delay-4">
+        <div class="barrel-tier">Tier 04 — Elite</div>
+        <div class="barrel-name">Petra Elite</div>
+        <div class="barrel-price">$100</div>
+        <div class="barrel-price-label">Entry Price</div>
+        <div class="barrel-specs">
+          <div class="spec-row">
+            <span class="spec-key">Cycle</span>
+            <span class="spec-val">45 Days</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Daily Yield</span>
+            <span class="spec-val highlight">$2.10 / day</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Total Return</span>
+            <span class="spec-val highlight">$194.50</span>
+          </div>
+          <div class="spec-row">
+            <span class="spec-key">Profit</span>
+            <span class="spec-val">+$94.50</span>
+          </div>
+        </div>
+        <button class="barrel-invest-btn" onclick="openModal('Petra Elite','$100','45 Days','$2.10/day','$194.50','+94.5%')">Invest Now</button>
+      </div>
+    </div>
+
+    <div style="margin-top:40px;padding:20px 0;border-top:1px solid var(--border);display:flex;gap:40px;flex-wrap:wrap;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;">⚡ Max 3 active barrels per tier</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;">⚡ Earnings locked until cycle end</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;">⚡ Early exit returns principal only</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;">⚡ Yields may adjust based on market</div>
+    </div>
+  </section>
+
+  <!-- YIELD SOURCE -->
+  <section class="yield-source" id="yield">
+    <div class="section-label reveal">Backend Strategy</div>
+    <h2 class="section-title reveal reveal-delay-1">Where Your<br><em>Yield Comes From</em></h2>
+    <div class="yield-grid">
+      <div class="yield-items reveal reveal-delay-2">
+        <div class="yield-item">
+          <div class="yield-icon">💎</div>
+          <div class="yield-info">
+            <h4>Stablecoin Staking</h4>
+            <p>Pooled funds staked on high-yield stablecoin protocols for consistent, low-risk returns.</p>
+          </div>
+        </div>
+        <div class="yield-item">
+          <div class="yield-icon">⚡</div>
+          <div class="yield-info">
+            <h4>Exchange Arbitrage</h4>
+            <p>Automated arbitrage across crypto exchanges captures price differentials for daily profit.</p>
+          </div>
+        </div>
+        <div class="yield-item">
+          <div class="yield-icon">🌊</div>
+          <div class="yield-info">
+            <h4>Liquidity Pools</h4>
+            <p>Strategic participation in DeFi liquidity pools generates trading fee income.</p>
+          </div>
+        </div>
+        <div class="yield-item">
+          <div class="yield-icon">🤖</div>
+          <div class="yield-info">
+            <h4>Low-Risk Trading Bots</h4>
+            <p>Conservative algorithmic strategies with daily earning caps and liquidity reserves.</p>
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="yield-chart">
+          <div class="chart-title">// Estimated Allocation</div>
+          <div class="chart-bars">
+            <div class="chart-bar-wrap">
+              <div class="chart-bar" style="height:65%;animation-delay:0.1s;"></div>
+              <div class="chart-bar-label">Staking</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar" style="height:80%;animation-delay:0.2s;background:linear-gradient(180deg,var(--amber),var(--gold-dim))"></div>
+              <div class="chart-bar-label">Arbitrage</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar" style="height:55%;animation-delay:0.3s;"></div>
+              <div class="chart-bar-label">Liquidity</div>
+            </div>
+            <div class="chart-bar-wrap">
+              <div class="chart-bar" style="height:40%;animation-delay:0.4s;background:linear-gradient(180deg,rgba(200,150,62,0.6),rgba(200,150,62,0.2))"></div>
+              <div class="chart-bar-label">Bots</div>
+            </div>
+          </div>
+          <div class="chart-line"></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot"></div> Primary strategy</div>
+            <div class="legend-item"><div class="legend-dot dim"></div> Support strategy</div>
+          </div>
+          <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7;">
+              ⚠ Projected yields are estimates.<br>
+              Actual returns may vary with market conditions.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFERRAL -->
+  <section class="referral" id="referral">
+    <div class="section-label reveal">Referral Program</div>
+    <h2 class="section-title reveal reveal-delay-1">Grow Your<br><em>Network</em></h2>
+    <div class="referral-layout">
+      <div class="referral-desc reveal reveal-delay-2">
+        <p>Invite others to Petrayield and earn a percentage of their investment profits. Our referral rewards are paid from platform profits — not from your referrals' deposits.</p>
+        <p>This ensures a <strong>sustainable, non-pyramid structure</strong> where growth benefits everyone without compromising user returns.</p>
+        <div style="margin-top:36px;background:var(--card);border:1px solid var(--border);padding:28px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.3em;color:var(--gold);margin-bottom:16px;">YOUR REFERRAL LINK</div>
+          <div style="background:var(--dark);padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:16px;">
+            <span>petrayield.io/ref/xxxxxxxx</span>
+            <button onclick="copyRef()" style="background:var(--gold);border:none;color:var(--black);padding:6px 16px;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.1em;cursor:none;white-space:nowrap;" id="copyBtn">COPY</button>
+          </div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div class="ref-levels">
+          <div class="ref-level">
+            <div class="ref-level-label">
+              Level 1
+              <span>Direct referrals you invite</span>
+            </div>
+            <div class="ref-level-pct">5%</div>
+          </div>
+          <div class="ref-level">
+            <div class="ref-level-label">
+              Level 2
+              <span>Referrals invited by your referrals</span>
+            </div>
+            <div class="ref-level-pct">2%</div>
+          </div>
+        </div>
+        <div style="margin-top:1px;background:var(--dark);padding:24px 36px;border-top:1px solid var(--border);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.9;letter-spacing:0.05em;">
+            ✓ Paid from platform profits only<br>
+            ✓ No unlimited referral levels<br>
+            ✓ No deposit dependency<br>
+            ✓ Sustainable by design
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WALLETS -->
+  <section class="wallets" id="wallets">
+    <div class="section-label reveal">Supported Platforms</div>
+    <h2 class="section-title reveal reveal-delay-1">Compatible<br><em>Wallets</em></h2>
+    <div class="wallets-row reveal reveal-delay-2">
+      <div class="wallet-card">
+        <div class="wallet-logo">🦊</div>
+        <div class="wallet-name">MetaMask</div>
+        <div class="wallet-desc">BEP20 · ERC20</div>
+      </div>
+      <div class="wallet-card">
+        <div class="wallet-logo">🛡️</div>
+        <div class="wallet-name">Trust Wallet</div>
+        <div class="wallet-desc">TRC20 · BEP20</div>
+      </div>
+      <div class="wallet-card">
+        <div class="wallet-logo">🟡</div>
+        <div class="wallet-name">Binance Wallet</div>
+        <div class="wallet-desc">BEP20 · BSC</div>
+      </div>
+    </div>
+    <div class="coins-row reveal reveal-delay-3">
+      <div class="coin-badge">₮ USDT (TRC20)</div>
+      <div class="coin-badge">₮ USDT (BEP20)</div>
+      <div class="coin-badge">◎ USDC (Optional)</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="section-label reveal">Common Questions</div>
+    <h2 class="section-title reveal reveal-delay-1">FAQ</h2>
+    <div class="faq-list reveal reveal-delay-2">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Are the yields guaranteed?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>No. All yields shown are projected estimates based on current market strategies. Actual returns may vary depending on market conditions, liquidity, and strategy performance. Crypto investments carry inherent risk.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What happens if I exit a barrel early?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>If you exit a barrel before the cycle ends, you will receive your principal investment back with no yield. This policy protects pool liquidity and ensures all users' returns remain stable.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How long do withdrawals take?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Withdrawals are processed within 24–48 hours after a cycle ends. A withdrawal fee of 1–3% applies. Minimum withdrawal amount is $5–$10 depending on the network.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is Petrayield real oil trading?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>No. "Petra Barrels" are digital investment representations themed around oil — a conceptual metaphor. All underlying activity is crypto-based: staking, arbitrage, liquidity provision, and algorithmic trading.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How many barrels can I hold?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>You may hold a maximum of 3 active barrels per tier at any time. There is no limit on how many different tiers you can invest across simultaneously.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How does the referral system work?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Share your referral link and earn 5% of your direct referrals' profits (Level 1) and 2% of their referrals' profits (Level 2). All referral rewards are paid from platform profits — not from deposited funds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">Petra<span style="color:var(--gold)">yield</span></div>
+        <p>Refining Digital Wealth through transparent, cycle-based crypto investment strategies. Built for Africa and the world.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Invest</h5>
+        <ul>
+          <li><a href="#barrels">Petra Lite</a></li>
+          <li><a href="#barrels">Petra Core</a></li>
+          <li><a href="#barrels">Petra Prime</a></li>
+          <li><a href="#barrels">Petra Elite</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#yield">Yield Strategy</a></li>
+          <li><a href="#referral">Referral</a></li>
+          <li><a href="#wallets">Wallets</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Risk Disclosure</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-disclaimer">Petrayield is a digital investment platform. All yields are projected estimates. Crypto investments carry significant risk. Past performance does not guarantee future returns.</div>
+      <div class="footer-copy">© 2025 Petrayield. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      setTimeout(() => {
+        ring.style.left = e.clientX + 'px';
+        ring.style.top = e.clientY + 'px';
+      }, 80);
+    });
+    document.querySelectorAll('button, a, .barrel-card, .step, .faq-question, .yield-item, .wallet-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px';
+        cursor.style.height = '20px';
+        ring.style.width = '60px';
+        ring.style.height = '60px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px';
+        cursor.style.height = '12px';
+        ring.style.width = '40px';
+        ring.style.height = '40px';
+      });
+    });
+
+    // TICKER
+    const items = [
+      'USDT/TRC20', 'Stablecoin Staking', 'Petra Lite — $10',
+      'Petra Core — $30', 'Arbitrage Strategy', 'Petra Prime — $50',
+      'Petra Elite — $100', 'Liquidity Pools', '24h Withdrawals',
+      'Level 1 Referral — 5%', 'Level 2 Referral — 2%', 'DeFi Yield',
+    ];
+    const ticker = document.getElementById('tickerInner');
+    const doubled = [...items, ...items, ...items, ...items];
+    ticker.innerHTML = doubled.map(t =>
+      `<div class="ticker-item"><span>${t}</span><div class="dot"></div></div>`
+    ).join('');
+
+    // SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+
+    // Hero immediate reveal
+    setTimeout(() => {
+      document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('visible'));
+    }, 100);
+
+    // FAQ
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    // MODAL
+    const barrelData = {};
+    function openModal(name, price, cycle, daily, total, roi) {
+      document.getElementById('modalTitle').textContent = name;
+      document.getElementById('modalInfo').innerHTML = `
+        <div class="modal-detail"><span>Barrel</span><span>${name}</span></div>
+        <div class="modal-detail"><span>Entry Price</span><span>${price}</span></div>
+        <div class="modal-detail"><span>Cycle Duration</span><span>${cycle}</span></div>
+        <div class="modal-detail"><span>Daily Yield</span><span>${daily}</span></div>
+        <div class="modal-detail"><span>Total Return</span><span>${total}</span></div>
+        <div class="modal-detail"><span>ROI</span><span>${roi}</span></div>
+      `;
+      document.getElementById('investModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('investModal').classList.remove('active');
+    }
+    document.getElementById('investModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // COPY REF
+    function copyRef() {
+      const btn = document.getElementById('copyBtn');
+      navigator.clipboard.writeText('https://petrayield.io/ref/xxxxxxxx').catch(() => {});
+      btn.textContent = 'COPIED!';
+      setTimeout(() => btn.textContent = 'COPY', 2000);
+    }
+
+    // Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
